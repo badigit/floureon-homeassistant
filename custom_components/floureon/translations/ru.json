@@ -1,0 +1,47 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Подключение локального термостата Floureon, Hysen, Beok, Beca или Decdeal.",
+        "data": {"host": "Адрес", "timeout": "Таймаут подключения", "entity_type": "Тип сущности"},
+        "data_description": {
+          "host": "Статический IP-адрес или имя термостата.",
+          "timeout": "Сколько секунд ждать один UDP-ответ.",
+          "entity_type": "Рекомендуется climate. Switch сохраняет прежний сценарий с generic thermostat."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Не удалось подключиться к термостату",
+      "invalid_auth": "Термостат отклонил авторизацию",
+      "not_supported": "Устройство не является поддерживаемым термостатом Hysen",
+      "unknown": "Непредвиденная ошибка"
+    },
+    "abort": {
+      "already_configured": "Этот термостат уже настроен",
+      "cannot_connect": "Не удалось подключиться к термостату",
+      "invalid_auth": "Термостат отклонил авторизацию",
+      "not_supported": "Устройство не является поддерживаемым термостатом Hysen",
+      "unknown": "Непредвиденная ошибка"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Интервал опроса", "entity_type": "Тип сущности",
+          "use_external_temp": "Использовать внешний датчик температуры", "schedule": "Схема расписания",
+          "precision": "Шаг температуры", "use_cooling": "Термостат управляет охлаждением",
+          "turn_off_mode": "Действие при выключении switch", "turn_on_mode": "Действие при включении switch"
+        },
+        "data_description": {
+          "scan_interval": "Как часто опрашивать термостат, в секундах.",
+          "schedule": "0: будни/выходные; 1: понедельник-суббота/воскресенье; 2: все дни.",
+          "turn_off_mode": "min_temp, turn_off или конкретная температура.",
+          "turn_on_mode": "max_temp или конкретная температура."
+        }
+      }
+    }
+  },
+  "exceptions": {"command_failed": {"message": "Команда термостату не выполнена: {error}"}}
+}

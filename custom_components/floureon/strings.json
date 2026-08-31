@@ -1,0 +1,59 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Connect to a Floureon, Hysen, Beok, Beca or Decdeal thermostat on the local network.",
+        "data": {
+          "host": "Host",
+          "timeout": "Connection timeout",
+          "entity_type": "Entity type"
+        },
+        "data_description": {
+          "host": "Static IP address or hostname of the thermostat.",
+          "timeout": "How long to wait for one UDP response, in seconds.",
+          "entity_type": "Climate is recommended. Switch preserves the legacy generic-thermostat scenario."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the thermostat",
+      "invalid_auth": "The thermostat rejected authentication",
+      "not_supported": "The device is not a supported Hysen thermostat",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "This thermostat is already configured",
+      "cannot_connect": "Failed to connect to the thermostat",
+      "invalid_auth": "The thermostat rejected authentication",
+      "not_supported": "The device is not a supported Hysen thermostat",
+      "unknown": "Unexpected error"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Update interval",
+          "entity_type": "Entity type",
+          "use_external_temp": "Use external temperature sensor",
+          "schedule": "Schedule layout",
+          "precision": "Temperature step",
+          "use_cooling": "Thermostat controls cooling",
+          "turn_off_mode": "Switch off action",
+          "turn_on_mode": "Switch on action"
+        },
+        "data_description": {
+          "scan_interval": "How often to poll the thermostat, in seconds.",
+          "schedule": "0: weekdays/weekend; 1: Monday-Saturday/Sunday; 2: every day.",
+          "turn_off_mode": "Use min_temp, turn_off, or an explicit temperature.",
+          "turn_on_mode": "Use max_temp or an explicit temperature."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "The thermostat command failed: {error}"
+    }
+  }
+}
