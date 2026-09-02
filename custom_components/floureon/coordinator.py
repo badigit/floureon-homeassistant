@@ -17,6 +17,7 @@ from homeassistant.exceptions import (
     HomeAssistantError,
 )
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 
 from .api import FloureonApiClient, FloureonAuthenticationError, FloureonStatus
 from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
@@ -115,6 +116,7 @@ class FloureonDataUpdateCoordinator(DataUpdateCoordinator[FloureonStatus]):
     async def async_set_time(self) -> None:
         """Best-effort clock synchronisation after setup."""
         try:
-            await self.async_command(self.client.set_time)
+            now = dt_util.now()
+            await self.async_command(lambda: self.client.set_time(now))
         except HomeAssistantError as err:
             _LOGGER.debug("Could not set thermostat time: %s", err)
