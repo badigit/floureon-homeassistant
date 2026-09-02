@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
+from zoneinfo import ZoneInfo
 
 import pytest
 from broadlink.exceptions import NetworkTimeoutError
@@ -212,6 +214,18 @@ async def test_coordinator_authentication_and_clock_failures(
 
     coordinator.async_command = AsyncMock(side_effect=HomeAssistantError("clock"))
     await coordinator.async_set_time()
+
+
+async def test_clock_uses_home_assistant_timezone(hass, entry, client, status) -> None:
+    """Clock sync must use HA's configured timezone, not the container timezone."""
+    coordinator = _coordinator(hass, entry, client, status)
+    now = datetime(2026, 9, 2, 10, 25, 0, tzinfo=ZoneInfo("Europe/Moscow"))
+    coordinator.async_command = AsyncMock(side_effect=lambda command: command())
+
+    with patch("custom_components.floureon.coordinator.dt_util.now", return_value=now):
+        await coordinator.async_set_time()
+
+    client.device.set_time.assert_called_once_with(10, 25, 0, 3)
 
 
 async def test_legacy_platforms_and_platform_selection(
