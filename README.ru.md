@@ -31,12 +31,17 @@ UDP-операции выполняются асинхронно. Команды
 
 ## Установка
 
-### HACS
+### Marketplace (Home Assistant 2026.11+)
 
-1. Откройте HACS, затем **Custom repositories**.
-2. Добавьте `https://github.com/badigit/floureon-homeassistant` как **Integration**.
-3. Установите **Hysen Thermostat (Broadlink)** и перезапустите Home Assistant.
-4. Откройте **Настройки → Устройства и службы → Добавить интеграцию** и найдите **Hysen Thermostat (Broadlink)**.
+1. Откройте **Настройки → Marketplace** и добавьте `https://github.com/badigit/floureon-homeassistant` как пользовательский репозиторий интеграции.
+2. Установите **Hysen Thermostat (Broadlink)** и перезапустите Home Assistant.
+3. Откройте **Настройки → Устройства и службы → Добавить интеграцию**, выберите **Hysen Thermostat (Broadlink)**.
+
+Пока репозиторий не включён в общий каталог, его необходимо добавлять вручную.
+
+### HACS для Home Assistant 2026.10 и более ранних версий
+
+В HACS откройте **Custom repositories**, добавьте тот же URL как **Integration**, установите интеграцию и перезапустите Home Assistant.
 
 ### Вручную
 
@@ -73,7 +78,7 @@ uv run pytest
 
 ## Благодарность
 
-Протокол термостата реализует библиотека [`broadlink-async`](https://github.com/mjg59/broadlink-async). Этот проект является самостоятельной новой интеграцией и не продолжает Git-историю прежнего `hass-floureon`.
+Протокол термостата реализует библиотека [`broadlink-async`](https://github.com/DAB-LABS/broadlink-async). Этот проект является самостоятельной новой интеграцией и не продолжает Git-историю прежнего `hass-floureon`.
 
 ## Лицензия
 
