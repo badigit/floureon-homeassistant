@@ -80,6 +80,7 @@ async def test_reload_listener(hass: HomeAssistant, entry, client) -> None:
         await hass.async_block_till_done()
     assert entry.state is ConfigEntryState.LOADED
 
+
 async def test_climate_converts_native_celsius_to_fahrenheit(
     hass: HomeAssistant,
     entry,
