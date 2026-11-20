@@ -212,3 +212,18 @@ async def test_options_flow(add_entry, hass: HomeAssistant) -> None:
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["data"]["scan_interval"] == 60
+
+async def test_config_flow_closes_discovery_socket(
+    hass: HomeAssistant,
+    mock_discovery: MagicMock,
+    mock_setup_entry: MagicMock,
+) -> None:
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_HOST: HOST, CONF_TIMEOUT: 3, CONF_ENTITY_TYPE: ENTITY_TYPE_CLIMATE},
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    mock_discovery.return_value.device.aclose.assert_awaited_once()

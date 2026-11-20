@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from homeassistant.const import CONF_HOST, CONF_MAC, CONF_TIMEOUT, CONF_TYPE
 from homeassistant.core import HomeAssistant
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.floureon.api import FloureonApiClient, FloureonStatus
 from custom_components.floureon.const import (
@@ -16,8 +16,6 @@ from custom_components.floureon.const import (
     ENTITY_TYPE_CLIMATE,
     SUPPORTED_DEVICE_TYPE,
 )
-
-pytest_plugins = "pytest_homeassistant_custom_component"
 
 HOST = "192.0.2.10"
 MAC = "112233445566"
@@ -43,11 +41,6 @@ RAW_STATUS = {
 }
 
 
-@pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations: None) -> None:
-    """Load the integration from this repository."""
-
-
 @pytest.fixture
 def device() -> MagicMock:
     """Return a configured python-broadlink device double."""
@@ -57,6 +50,11 @@ def device() -> MagicMock:
     result.devtype = SUPPORTED_DEVICE_TYPE
     result.model = "HY02/HY03"
     result.manufacturer = "Hysen"
+    for method in (
+        "auth", "aclose", "get_full_status", "set_time", "set_mode",
+        "set_temp", "set_power",
+    ):
+        setattr(result, method, AsyncMock())
     result.auth.return_value = True
     result.get_full_status.return_value = dict(RAW_STATUS)
     return result
@@ -96,6 +94,7 @@ def mock_discovery(client: FloureonApiClient):
     """Patch config-flow discovery."""
     with patch(
         "custom_components.floureon.config_flow.FloureonApiClient.discover",
+        new_callable=AsyncMock,
         return_value=client,
     ) as mocked:
         yield mocked

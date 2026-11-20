@@ -38,9 +38,9 @@ async def test_setup_commands_reload_and_unload(
     assert state.state == HVACMode.AUTO
     assert state.attributes["current_temperature"] == 25.0
     assert state.attributes["temperature"] == 23.0
-    assert device.auth.call_count == 1
-    assert device.get_full_status.call_count >= 2
-    device.set_time.assert_called_once()
+    assert device.auth.await_count == 1
+    assert device.get_full_status.await_count >= 2
+    device.set_time.assert_awaited_once()
 
     await hass.services.async_call(
         CLIMATE_DOMAIN,
@@ -48,8 +48,8 @@ async def test_setup_commands_reload_and_unload(
         {ATTR_ENTITY_ID: state.entity_id, ATTR_TEMPERATURE: 22.5},
         blocking=True,
     )
-    device.set_mode.assert_any_call(0, 0, 1)
-    device.set_temp.assert_any_call(22.5)
+    device.set_mode.assert_any_await(0, 0, 1)
+    device.set_temp.assert_any_await(22.5)
 
     await hass.services.async_call(
         CLIMATE_DOMAIN,
@@ -57,10 +57,11 @@ async def test_setup_commands_reload_and_unload(
         {ATTR_ENTITY_ID: state.entity_id, ATTR_HVAC_MODE: HVACMode.OFF},
         blocking=True,
     )
-    device.set_power.assert_any_call(0, heating_cooling=0)
+    device.set_power.assert_any_await(0, heating_cooling=0)
 
     assert await hass.config_entries.async_unload(entry.entry_id)
     assert hass.states.get(state.entity_id).state == "unavailable"
+    device.aclose.assert_awaited_once()
 
 
 async def test_reload_listener(hass: HomeAssistant, entry, client) -> None:
