@@ -14,7 +14,8 @@ from homeassistant.components.climate import (
     DOMAIN as CLIMATE_DOMAIN,
 )
 from homeassistant.config_entries import ConfigEntryState
-from homeassistant.const import ATTR_ENTITY_ID, ATTR_TEMPERATURE, US_CUSTOMARY_SYSTEM
+from homeassistant.const import ATTR_ENTITY_ID, ATTR_TEMPERATURE
+from homeassistant.util.unit_system import US_CUSTOMARY_SYSTEM
 from homeassistant.core import HomeAssistant
 
 
