@@ -15,8 +15,8 @@ from homeassistant.components.climate import (
 )
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import ATTR_ENTITY_ID, ATTR_TEMPERATURE
-from homeassistant.util.unit_system import US_CUSTOMARY_SYSTEM
 from homeassistant.core import HomeAssistant
+from homeassistant.util.unit_system import US_CUSTOMARY_SYSTEM
 
 
 async def test_setup_commands_reload_and_unload(
