@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 import voluptuous as vol
-from broadlink.exceptions import AuthenticationError, BroadlinkException
+from broadlink_async.exceptions import AuthenticationError, BroadlinkException
 from homeassistant import config_entries
 from homeassistant.const import (
     CONF_HOST,
@@ -136,14 +136,14 @@ class FloureonConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _async_connect(self, user_input: dict[str, Any]) -> str | None:
         """Discover, validate and authenticate a device."""
+        client: FloureonApiClient | None = None
         try:
-            client = await self.hass.async_add_executor_job(
-                FloureonApiClient.discover,
+            client = await FloureonApiClient.discover(
                 user_input[CONF_HOST],
                 user_input.get(CONF_TIMEOUT, DEFAULT_TIMEOUT),
             )
-            await self.hass.async_add_executor_job(client.authenticate)
-            await self.hass.async_add_executor_job(client.read_status)
+            await client.authenticate()
+            await client.read_status()
         except UnsupportedDeviceError:
             return "not_supported"
         except (AuthenticationError, FloureonAuthenticationError):
@@ -152,6 +152,9 @@ class FloureonConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return "cannot_connect"
         except Exception:  # noqa: BLE001 - config flow must keep the form open
             return "unknown"
+        finally:
+            if client is not None:
+                await client.close()
         self._client = client
         return None
 
@@ -191,7 +194,8 @@ class FloureonConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             updates={
                 CONF_HOST: self._client.host,
                 CONF_TIMEOUT: self._input.get(CONF_TIMEOUT, DEFAULT_TIMEOUT),
-            }
+            },
+            reload_on_update=False,
         )
         data = {
             CONF_HOST: self._client.host,

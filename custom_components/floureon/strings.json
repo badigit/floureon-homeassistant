@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "description": "Connect to a Floureon, Hysen, Beok, Beca or Decdeal thermostat on the local network.",
+        "description": "Connect to a Hysen, Floureon, Beok, Beca or Decdeal thermostat on the local network.",
         "data": {
           "host": "Host",
           "timeout": "Connection timeout",

@@ -1,13 +1,22 @@
 {
   "domain": "floureon",
-  "name": "Floureon Thermostat",
-  "codeowners": ["@badigit"],
+  "name": "Hysen Thermostat (Broadlink)",
+  "codeowners": [
+    "@badigit"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/badigit/floureon-homeassistant",
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/badigit/floureon-homeassistant/issues",
-  "loggers": ["broadlink"],
-  "requirements": ["broadlink==0.19.0"],
-  "version": "2.0.1"
+  "loggers": [
+    "broadlink_async"
+  ],
+  "requirements": [
+    "broadlink-async==1.1.1"
+  ],
+  "version": "2.0.1",
+  "categories": [
+    "climate.thermostats_heating"
+  ]
 }

@@ -109,7 +109,7 @@ async def async_setup_entry(
 class FloureonClimate(FloureonEntity, ClimateEntity, RestoreEntity):
     """Represent a local Floureon/Hysen thermostat."""
 
-    _attr_temperature_unit = UnitOfTemperature.CELSIUS
+    _attr_native_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_supported_features = (
         ClimateEntityFeature.TARGET_TEMPERATURE
         | ClimateEntityFeature.PRESET_MODE
@@ -166,13 +166,13 @@ class FloureonClimate(FloureonEntity, ClimateEntity, RestoreEntity):
         return HVACAction.HEATING
 
     @property
-    def current_temperature(self) -> float | None:
+    def native_current_temperature(self) -> float | None:
         """Return the configured control sensor reading."""
         data = self.coordinator.data
         return data.external_temp if self._use_external_temp else data.room_temp
 
     @property
-    def target_temperature(self) -> float | None:
+    def native_target_temperature(self) -> float | None:
         """Return the physical target temperature."""
         return self.coordinator.data.target_temp
 
@@ -266,7 +266,6 @@ class FloureonClimate(FloureonEntity, ClimateEntity, RestoreEntity):
         )
         if target is None:
             target = self.coordinator.data.target_temp or self.min_temp
-        self._preset_mode = preset_mode
         await self.coordinator.async_command(
             partial(
                 self.coordinator.client.set_preset_temperature,
@@ -276,6 +275,7 @@ class FloureonClimate(FloureonEntity, ClimateEntity, RestoreEntity):
                 cooling=self._use_cooling,
             )
         )
+        self._preset_mode = preset_mode
 
     async def async_turn_on(self) -> None:
         """Restore automatic operation."""

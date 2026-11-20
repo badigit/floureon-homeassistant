@@ -21,7 +21,7 @@ Some **Computherm** models (such as E400RF) have been described by other project
 - Shared `DataUpdateCoordinator`, proper unavailable state handling, and diagnostics.
 - Automatic import of legacy YAML configuration.
 
-Blocking UDP operations run in an executor. Polling and commands for each device are serialized to avoid overlapping Broadlink packets.
+UDP operations use native async I/O. Commands and polling are serialized per device; the transport reconnects automatically after network failures.
 
 ## Requirements
 
@@ -35,8 +35,8 @@ Blocking UDP operations run in an executor. Polling and commands for each device
 
 1. Open HACS and select **Custom repositories**.
 2. Add `https://github.com/badigit/floureon-homeassistant` as an **Integration**.
-3. Install **Floureon Thermostat** and restart Home Assistant.
-4. Go to **Settings → Devices & services → Add integration** and find **Floureon Thermostat**.
+3. Install **Hysen Thermostat (Broadlink)** and restart Home Assistant.
+4. Go to **Settings → Devices & services → Add integration** and find **Hysen Thermostat (Broadlink)**.
 
 ### Manual installation
 
@@ -73,8 +73,12 @@ Home Assistant tests run on Linux because Home Assistant Core imports the POSIX-
 
 ## Acknowledgments
 
-The thermostat protocol is implemented by [`python-broadlink`](https://github.com/mjg59/python-broadlink). This project is an independent new integration and does not continue the Git history of the former `hass-floureon` project.
+The thermostat protocol is implemented by [`broadlink-async`](https://github.com/mjg59/broadlink-async). This project is an independent new integration and does not continue the Git history of the former `hass-floureon` project.
 
 ## License
 
 MIT. This project is not affiliated with any of the device manufacturers mentioned above.
+
+## Existing installations and integration ID
+
+The displayed integration name is **Hysen Thermostat (Broadlink)**, but the Home Assistant domain and installation folder remain `floureon`. Existing config entries and entity IDs are preserved; no reinstallation is required. The repository URL is unchanged.

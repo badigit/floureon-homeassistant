@@ -1,14 +1,15 @@
 [project]
 name = "floureon-homeassistant"
 version = "2.0.1"
-description = "Modern Home Assistant integration for Floureon/Hysen thermostats"
+description = "Local Home Assistant integration for Hysen HY02/HY03 Broadlink thermostats"
 requires-python = ">=3.14.2"
 dependencies = []
 
 [dependency-groups]
 dev = [
-    "broadlink==0.19.0",
-    "pytest-homeassistant-custom-component==0.13.357",
+    "broadlink-async==1.1.1",
+    "pytest-homeassistant==2026.11.2",
+    "ruff>=0.14.0",
     "pytest-timeout>=2.3",
     "pytest-cov>=6",
 ]
@@ -16,6 +17,9 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-p no:respx"
+pythonpath = ["."]
 timeout = 60
 timeout_method = "thread"
 
@@ -23,5 +27,5 @@ timeout_method = "thread"
 source = ["custom_components/floureon"]
 
 [tool.ruff]
-target-version = "py313"
+target-version = "py314"
 line-length = 88
