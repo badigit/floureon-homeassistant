@@ -14,7 +14,7 @@ from homeassistant.components.climate import (
     DOMAIN as CLIMATE_DOMAIN,
 )
 from homeassistant.config_entries import ConfigEntryState
-from homeassistant.const import ATTR_ENTITY_ID, ATTR_TEMPERATURE
+from homeassistant.const import ATTR_ENTITY_ID, ATTR_TEMPERATURE, US_CUSTOMARY_SYSTEM
 from homeassistant.core import HomeAssistant
 
 
@@ -78,3 +78,24 @@ async def test_reload_listener(hass: HomeAssistant, entry, client) -> None:
         )
         await hass.async_block_till_done()
     assert entry.state is ConfigEntryState.LOADED
+
+async def test_climate_converts_native_celsius_to_fahrenheit(
+    hass: HomeAssistant,
+    entry,
+    client,
+) -> None:
+    hass.config.units = US_CUSTOMARY_SYSTEM
+    entry.add_to_hass(hass)
+    with patch(
+        "custom_components.floureon.FloureonApiClient.from_config",
+        return_value=client,
+    ):
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+
+    state = hass.states.get("climate.hall_thermostat")
+    assert state is not None
+    assert state.attributes["temperature_unit"] == "°F"
+    assert abs(state.attributes["current_temperature"] - 77.0) < 0.6
+    assert abs(state.attributes["temperature"] - 73.4) < 0.6
+    assert await hass.config_entries.async_unload(entry.entry_id)

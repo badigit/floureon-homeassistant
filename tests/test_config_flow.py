@@ -228,3 +228,22 @@ async def test_config_flow_closes_discovery_socket(
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     mock_discovery.return_value.device.aclose.assert_awaited_once()
+
+async def test_rediscovery_updates_ip_without_reloading_twice(
+    hass: HomeAssistant,
+    add_entry,
+    mock_discovery: MagicMock,
+    mock_setup_entry: MagicMock,
+) -> None:
+    new_host = "192.0.2.21"
+    mock_discovery.return_value.device.host = (new_host, 80)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_HOST: new_host, CONF_TIMEOUT: 3, CONF_ENTITY_TYPE: ENTITY_TYPE_CLIMATE},
+    )
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "already_configured"
+    assert add_entry.data[CONF_HOST] == new_host

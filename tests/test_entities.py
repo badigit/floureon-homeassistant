@@ -270,3 +270,20 @@ async def test_failed_away_command_keeps_local_preset(
     with pytest.raises(HomeAssistantError):
         await entity.async_set_preset_mode(PRESET_AWAY)
     assert entity.preset_mode == PRESET_NONE
+
+async def test_coordinator_recovers_after_temporary_network_failure(
+    hass, entry, client, status
+) -> None:
+    from homeassistant.helpers.update_coordinator import UpdateFailed
+
+    coordinator = _coordinator(hass, entry, client, status)
+    client.read_status = AsyncMock(
+        side_effect=[
+            NetworkTimeoutError(-4000, "timeout", "offline"),
+            status,
+        ]
+    )
+    with pytest.raises(UpdateFailed):
+        await coordinator._async_update_data()
+    assert await coordinator._async_update_data() == status
+    assert client.read_status.await_count == 2
