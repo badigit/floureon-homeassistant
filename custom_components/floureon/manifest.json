@@ -1,6 +1,9 @@
 {
   "domain": "floureon",
   "name": "Hysen Thermostat (Broadlink)",
+  "categories": [
+    "climate.thermostats_heating"
+  ],
   "codeowners": [
     "@badigit"
   ],
@@ -13,10 +16,7 @@
     "broadlink_async"
   ],
   "requirements": [
-    "broadlink-async==1.1.1"
+    "broadlink-async==1.2.1"
   ],
-  "version": "2.0.1",
-  "categories": [
-    "climate.thermostats_heating"
-  ]
+  "version": "2.0.1"
 }

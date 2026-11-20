@@ -25,7 +25,7 @@ UDP operations use native async I/O. Commands and polling are serialized per dev
 
 ## Requirements
 
-- Home Assistant **2026.7.0** or newer.
+- Home Assistant **2026.11.0** or newer.
 - A fixed IP address for the thermostat (a DHCP reservation is recommended).
 - A compatible thermostat with Broadlink device type **`0x4EAD`**.
 

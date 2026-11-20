@@ -1,5 +1,5 @@
 {
   "name": "Hysen Thermostat (Broadlink)",
-  "homeassistant": "2026.7.0",
+  "homeassistant": "2026.11.0",
   "hide_default_branch": true
 }
