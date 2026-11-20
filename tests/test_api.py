@@ -48,7 +48,11 @@ async def test_discover_supported_device(device: MagicMock) -> None:
 async def test_discover_rejects_other_broadlink_device(device: MagicMock) -> None:
     device.devtype = 0x2711
     with (
-        patch("custom_components.floureon.api.broadlink_async.hello", new_callable=AsyncMock, return_value=device),
+        patch(
+            "custom_components.floureon.api.broadlink_async.hello",
+            new_callable=AsyncMock,
+            return_value=device,
+        ),
         pytest.raises(UnsupportedDeviceError),
     ):
         await FloureonApiClient.discover(HOST, 3)
@@ -71,7 +75,9 @@ def test_from_config_recreates_without_discovery(device: MagicMock) -> None:
     assert client.device.timeout == 4
 
 
-async def test_read_and_all_commands(client: FloureonApiClient, device: MagicMock) -> None:
+async def test_read_and_all_commands(
+    client: FloureonApiClient, device: MagicMock
+) -> None:
     assert (await client.read_status()).target_temp == 23
     await client.authenticate()
     await client.set_time(datetime(2026, 8, 31, 12, 34, 56, tzinfo=UTC))

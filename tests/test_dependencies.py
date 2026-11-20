@@ -4,7 +4,6 @@ import json
 import tomllib
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -17,7 +16,8 @@ def test_runtime_broadlink_requirement_matches_test_environment() -> None:
         dep for dep in manifest["requirements"] if dep.startswith("broadlink-async==")
     )
     development = next(
-        dep for dep in pyproject["dependency-groups"]["dev"]
+        dep
+        for dep in pyproject["dependency-groups"]["dev"]
         if dep.startswith("broadlink-async==")
     )
     assert runtime == development

@@ -146,9 +146,9 @@ class FloureonConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             await client.read_status()
         except UnsupportedDeviceError:
             return "not_supported"
-        except (AuthenticationError, FloureonAuthenticationError):
+        except AuthenticationError, FloureonAuthenticationError:
             return "invalid_auth"
-        except (BroadlinkException, OSError):
+        except BroadlinkException, OSError:
             return "cannot_connect"
         except Exception:  # noqa: BLE001 - config flow must keep the form open
             return "unknown"

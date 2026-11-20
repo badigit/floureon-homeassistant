@@ -192,9 +192,7 @@ async def test_coordinator_authentication_and_clock_failures(
     with pytest.raises(ConfigEntryNotReady):
         await coordinator.async_authenticate()
 
-    client.authenticate = AsyncMock(
-        side_effect=FloureonAuthenticationError("rejected")
-    )
+    client.authenticate = AsyncMock(side_effect=FloureonAuthenticationError("rejected"))
     with pytest.raises(ConfigEntryNotReady):
         await coordinator.async_authenticate()
 
@@ -210,6 +208,7 @@ async def test_clock_uses_home_assistant_timezone(hass, entry, client, status) -
     """Clock sync must use HA's configured timezone, not the container timezone."""
     coordinator = _coordinator(hass, entry, client, status)
     now = datetime(2026, 9, 2, 10, 25, 0, tzinfo=ZoneInfo("Europe/Moscow"))
+
     async def execute(command):
         await command()
 
@@ -261,7 +260,10 @@ async def test_diagnostics_redacts_identity(hass, entry, client, status) -> None
     assert diagnostics["status"]["target_temp"] == 23
     assert diagnostics["config_entry"]["data"]["host"] == "**REDACTED**"
 
-async def test_failed_away_command_keeps_local_preset(hass, entry, client, status) -> None:
+
+async def test_failed_away_command_keeps_local_preset(
+    hass, entry, client, status
+) -> None:
     coordinator = _coordinator(hass, entry, client, status)
     coordinator.async_command = AsyncMock(side_effect=HomeAssistantError("offline"))
     entity = FloureonClimate(coordinator)

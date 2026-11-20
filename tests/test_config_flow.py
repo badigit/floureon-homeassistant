@@ -213,6 +213,7 @@ async def test_options_flow(add_entry, hass: HomeAssistant) -> None:
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["data"]["scan_interval"] == 60
 
+
 async def test_config_flow_closes_discovery_socket(
     hass: HomeAssistant,
     mock_discovery: MagicMock,

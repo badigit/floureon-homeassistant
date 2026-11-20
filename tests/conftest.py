@@ -51,8 +51,13 @@ def device() -> MagicMock:
     result.model = "HY02/HY03"
     result.manufacturer = "Hysen"
     for method in (
-        "auth", "aclose", "get_full_status", "set_time", "set_mode",
-        "set_temp", "set_power",
+        "auth",
+        "aclose",
+        "get_full_status",
+        "set_time",
+        "set_mode",
+        "set_temp",
+        "set_power",
     ):
         setattr(result, method, AsyncMock())
     result.auth.return_value = True

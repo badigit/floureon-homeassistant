@@ -25,6 +25,8 @@ from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 type FloureonConfigEntry = ConfigEntry["FloureonDataUpdateCoordinator"]
+
+
 class FloureonDataUpdateCoordinator(DataUpdateCoordinator[FloureonStatus]):
     """Serialise access to one blocking UDP thermostat."""
 
