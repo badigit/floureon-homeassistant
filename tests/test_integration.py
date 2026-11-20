@@ -6,13 +6,16 @@ from unittest.mock import MagicMock, patch
 
 from homeassistant.components.climate import (
     ATTR_HVAC_MODE,
+    ATTR_PRESET_MODE,
     SERVICE_SET_HVAC_MODE,
+    SERVICE_SET_PRESET_MODE,
     SERVICE_SET_TEMPERATURE,
     HVACMode,
 )
 from homeassistant.components.climate import (
     DOMAIN as CLIMATE_DOMAIN,
 )
+from homeassistant.components.climate.const import PRESET_AWAY
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import ATTR_ENTITY_ID, ATTR_TEMPERATURE
 from homeassistant.core import HomeAssistant
@@ -100,4 +103,34 @@ async def test_climate_converts_native_celsius_to_fahrenheit(
     assert state.attributes["temperature_unit"] == "°F"
     assert abs(state.attributes["current_temperature"] - 77.0) < 0.6
     assert abs(state.attributes["temperature"] - 73.4) < 0.6
+    assert await hass.config_entries.async_unload(entry.entry_id)
+
+
+async def test_preset_mode_is_published_after_command(
+    hass: HomeAssistant,
+    entry,
+    client,
+) -> None:
+    """The post-command refresh must not freeze a stale preset in the state."""
+    entry.add_to_hass(hass)
+    with patch(
+        "custom_components.floureon.FloureonApiClient.from_config",
+        return_value=client,
+    ):
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+
+    state = hass.states.get("climate.hall_thermostat")
+    assert state is not None
+
+    await hass.services.async_call(
+        CLIMATE_DOMAIN,
+        SERVICE_SET_PRESET_MODE,
+        {ATTR_ENTITY_ID: state.entity_id, ATTR_PRESET_MODE: PRESET_AWAY},
+        blocking=True,
+    )
+    await hass.async_block_till_done()
+
+    state = hass.states.get(state.entity_id)
+    assert state.attributes["preset_mode"] == PRESET_AWAY
     assert await hass.config_entries.async_unload(entry.entry_id)

@@ -78,6 +78,7 @@ async def test_climate_all_commands(hass, entry, client, status) -> None:
     coordinator = _coordinator(hass, entry, client, status)
     coordinator.async_command = AsyncMock()
     entity = FloureonClimate(coordinator)
+    entity.async_write_ha_state = MagicMock()
 
     await entity.async_set_temperature(temperature=21.5)
     entity._preset_mode = PRESET_AWAY

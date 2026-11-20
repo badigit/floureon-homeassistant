@@ -234,6 +234,7 @@ class FloureonClimate(FloureonEntity, ClimateEntity, RestoreEntity):
             self._away_set_point = target
         else:
             self._manual_set_point = target
+        self.async_write_ha_state()
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set automatic, manual or off mode."""
@@ -254,6 +255,7 @@ class FloureonClimate(FloureonEntity, ClimateEntity, RestoreEntity):
         )
         if hvac_mode in (HVACMode.AUTO, HVACMode.OFF):
             self._preset_mode = PRESET_NONE
+        self.async_write_ha_state()
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Apply the remembered away or manual target."""
@@ -276,6 +278,7 @@ class FloureonClimate(FloureonEntity, ClimateEntity, RestoreEntity):
             )
         )
         self._preset_mode = preset_mode
+        self.async_write_ha_state()
 
     async def async_turn_on(self) -> None:
         """Restore automatic operation."""
