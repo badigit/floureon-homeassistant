@@ -2,7 +2,7 @@ name: Tests
 
 on:
   push:
-    branches: [main, feat/hysen-ha-2026-11-async]
+    branches: [main]
   pull_request:
   workflow_dispatch:
   schedule:
@@ -13,28 +13,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lockfile-bootstrap:
-    if: github.event_name == 'push' && github.ref_name == 'feat/hysen-ha-2026-11-async'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
-      - run: uv lock
-      - run: uv sync --group dev --frozen
-      - run: uv run ruff check --fix custom_components tests
-      - run: uv run ruff format custom_components tests
-      - name: Commit refreshed lockfile and formatting
-        run: |
-          if ! git diff --quiet -- uv.lock custom_components tests; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add uv.lock custom_components tests
-            git commit -m "chore: refresh uv.lock and format Hysen integration"
-            git push origin "HEAD:feat/hysen-ha-2026-11-async"
-          fi
-
   pytest:
     name: pytest
     runs-on: ubuntu-latest
@@ -44,7 +22,7 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: uv.lock
-      - run: uv lock
+      - run: uv lock --check
       - run: uv sync --group dev --frozen
       - run: uv run pytest --cov=custom_components/floureon --cov-report=term-missing
 
@@ -54,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.0.1
-      - run: uv lock
+      - run: uv lock --check
       - run: uv sync --group dev --frozen
       - run: uv run ruff check custom_components tests
       - run: uv run ruff format --check custom_components tests

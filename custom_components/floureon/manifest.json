@@ -16,7 +16,7 @@
     "broadlink_async"
   ],
   "requirements": [
-    "broadlink-async==1.2.1"
+    "broadlink-async>=1.2.1"
   ],
   "version": "2.0.1"
 }
