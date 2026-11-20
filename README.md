@@ -1,87 +1,80 @@
-# Floureon Thermostat для Home Assistant
+# Hysen / Floureon Wi-Fi Thermostats for Home Assistant
 
-Современная локальная интеграция термостатов Hysen HY02/HY03, которые
-продаются под марками Floureon, Beok, Beca, Decdeal и другими. Работает через
-локальный UDP-протокол Broadlink, облако и внешний аккаунт не нужны.
+**English** | [Русский](README.ru.md)
 
-## Возможности
+A local Home Assistant integration for **Hysen HY02/HY03 Wi-Fi thermostats** using the Broadlink UDP protocol. Thermostats based on this platform are sold under several brands, including **Floureon, Beok (BeOK), Beca / Beca Energy, Decdeal**, and others. Communication stays on your local network; no cloud account is required.
 
-- настройка через UI и уникальный ID по MAC-адресу;
-- `climate` с режимами auto, heat/heat_cool и off;
-- текущая и целевая температура, действие нагрева/охлаждения;
-- пресет away с запоминанием отдельной уставки;
-- выбор внутреннего или внешнего датчика, схемы расписания и шага температуры;
-- опциональный `switch` для прежнего сценария с Generic Thermostat;
-- общий `DataUpdateCoordinator`, честная unavailable-семантика и diagnostics;
-- автоматический импорт старой YAML-конфигурации.
+## Compatibility
 
-Все блокирующие UDP-операции выполняются в executor. Команды и опрос одного
-устройства сериализованы, поэтому пакеты Broadlink не пересекаются.
+**The protocol matters, not the brand or appearance.** This integration accepts thermostats reporting **Broadlink device type `0x4EAD`**. A similar-looking device or one sold under a listed brand is not necessarily compatible; other Wi-Fi, Zigbee, or Tuya variants may use different protocols.
 
-## Требования
+Some **Computherm** models (such as E400RF) have been described by other projects as Hysen-based, but **they have not been verified with this integration**. If you test another model, please [open an issue](https://github.com/badigit/floureon-homeassistant/issues) with its exact model and Broadlink device type.
 
-- Home Assistant 2026.7.0 или новее;
-- термостату нужен постоянный IP-адрес;
-- поддерживаемый Broadlink device type `0x4EAD`.
+## Features
 
-## Установка
+- Configuration through the Home Assistant UI and a unique ID based on the device MAC address.
+- A `climate` entity with automatic, manual heating/cooling (where supported), and off modes.
+- Current and target temperatures, plus heating/cooling activity.
+- An `away` preset with a separately remembered target temperature.
+- Internal or external temperature sensor, weekly schedule layout, and temperature step options.
+- Optional `switch` entity for existing setups using Generic Thermostat.
+- Shared `DataUpdateCoordinator`, proper unavailable state handling, and diagnostics.
+- Automatic import of legacy YAML configuration.
+
+Blocking UDP operations run in an executor. Polling and commands for each device are serialized to avoid overlapping Broadlink packets.
+
+## Requirements
+
+- Home Assistant **2026.7.0** or newer.
+- A fixed IP address for the thermostat (a DHCP reservation is recommended).
+- A compatible thermostat with Broadlink device type **`0x4EAD`**.
+
+## Installation
 
 ### HACS
 
-1. Откройте HACS, затем **Custom repositories**.
-2. Добавьте `https://github.com/badigit/floureon-homeassistant` как
-   **Integration**.
-3. Установите **Floureon Thermostat** и перезапустите Home Assistant.
-4. Откройте **Настройки → Устройства и службы → Добавить интеграцию**.
+1. Open HACS and select **Custom repositories**.
+2. Add `https://github.com/badigit/floureon-homeassistant` as an **Integration**.
+3. Install **Floureon Thermostat** and restart Home Assistant.
+4. Go to **Settings → Devices & services → Add integration** and find **Floureon Thermostat**.
 
-### Вручную
+### Manual installation
 
-Скопируйте `custom_components/floureon` в одноимённый каталог конфигурации
-Home Assistant и перезапустите Core.
+Copy `custom_components/floureon` to the corresponding directory in your Home Assistant configuration folder, then restart Home Assistant Core.
 
-## Параметры
+## Configuration
 
-При добавлении задаются адрес устройства, UDP-таймаут и тип сущности.
-Рекомендуемый тип - `climate`. В параметрах записи доступны:
+When adding a device, enter its address, UDP timeout, and entity type. The recommended entity type is `climate`. The following options are available:
 
-| Параметр | По умолчанию | Диапазон / смысл |
+| Option | Default | Range / meaning |
 | --- | --- | --- |
-| Интервал опроса | 30 с | 10-3600 с |
-| Внешний датчик | включён | внешний или внутренний |
-| Схема расписания | 0 | `0`: 5+2, `1`: 6+1, `2`: 7 дней |
-| Шаг температуры | 0.5 °C | 0.5 или 1.0 °C |
-| Охлаждение | выключено | режим `heat_cool` для подходящего контроллера |
+| Polling interval | 30 s | 10–3600 s |
+| External sensor | Enabled | External or internal temperature sensor |
+| Schedule layout | 0 | `0`: 5+2; `1`: 6+1; `2`: 7 days |
+| Temperature step | 0.5 °C | 0.5 or 1.0 °C |
+| Cooling | Disabled | Enables `heat_cool` for a suitable controller |
 
-Switch-режим дополнительно позволяет выбрать действие при включении и
-выключении: физическое выключение, min/max или конкретная температура.
+The optional switch mode also lets you choose what happens when switching on or off: physical power off, minimum/maximum temperature, or a specific temperature.
 
-## Переход со старой версии
+## Migrating from the legacy integration
 
-Старые блоки `climate: - platform: floureon` и
-`switch: - platform: floureon` импортируются в config entry при первом
-запуске. После успешного появления устройства YAML-блок можно удалить.
-`name`, настройки датчика, расписания, точности и switch-режима сохраняются.
-Старое значение точности 0.1 °C переносится как 0.5 °C: регистр целевой
-температуры Hysen физически поддерживает только половины градуса.
+Legacy `climate: - platform: floureon` and `switch: - platform: floureon` YAML entries are imported into config entries on first startup. Once the device appears successfully, you can remove the old YAML configuration.
 
-## Разработка
+The existing name, sensor settings, schedule, temperature precision, and switch behavior are preserved. An old precision of 0.1 °C is converted to 0.5 °C because the Hysen target-temperature register only supports half-degree increments.
+
+## Development
 
 ```bash
 uv sync --group dev
 uv run pytest
 ```
 
-Тесты Home Assistant запускаются на Linux: ядро импортирует POSIX-модуль
-`fcntl`, которого нет на Windows. CI дополнительно запускает hassfest и HACS
-validation.
+Home Assistant tests run on Linux because Home Assistant Core imports the POSIX-only `fcntl` module, which is unavailable on Windows. CI also runs hassfest and HACS validation.
 
-## Благодарность
+## Acknowledgments
 
-Протокол термостата реализует библиотека
-[`python-broadlink`](https://github.com/mjg59/python-broadlink). Этот проект
-является самостоятельной новой интеграцией и не продолжает Git-историю
-прежнего `hass-floureon`.
+The thermostat protocol is implemented by [`python-broadlink`](https://github.com/mjg59/python-broadlink). This project is an independent new integration and does not continue the Git history of the former `hass-floureon` project.
 
-## Лицензия
+## License
 
-MIT. Проект не связан с производителями перечисленных устройств.
+MIT. This project is not affiliated with any of the device manufacturers mentioned above.
