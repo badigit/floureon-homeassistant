@@ -229,6 +229,7 @@ async def test_config_flow_closes_discovery_socket(
     assert result["type"] is FlowResultType.CREATE_ENTRY
     mock_discovery.return_value.device.aclose.assert_awaited_once()
 
+
 async def test_rediscovery_updates_ip_without_reloading_twice(
     hass: HomeAssistant,
     add_entry,
