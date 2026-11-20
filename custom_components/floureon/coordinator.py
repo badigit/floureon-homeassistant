@@ -28,7 +28,7 @@ type FloureonConfigEntry = ConfigEntry["FloureonDataUpdateCoordinator"]
 
 
 class FloureonDataUpdateCoordinator(DataUpdateCoordinator[FloureonStatus]):
-    """Serialise access to one blocking UDP thermostat."""
+    """Serialise access to one UDP thermostat."""
 
     config_entry: FloureonConfigEntry
 

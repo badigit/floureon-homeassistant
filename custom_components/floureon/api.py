@@ -1,7 +1,8 @@
-"""Synchronous client for Floureon/Hysen thermostats.
+"""Async client for Floureon/Hysen thermostats.
 
-python-broadlink uses blocking UDP sockets. This module deliberately does not
-know about Home Assistant; the coordinator runs every call in its executor.
+broadlink-async talks to the device over UDP with native coroutines. This
+module deliberately does not know about Home Assistant; the coordinator
+serialises every call through one lock.
 """
 
 from __future__ import annotations
@@ -41,7 +42,7 @@ class FloureonStatus:
 
     @classmethod
     def from_api(cls, raw: Mapping[str, Any]) -> FloureonStatus:
-        """Normalise python-broadlink's status dictionary."""
+        """Normalise broadlink-async's status dictionary."""
         return cls(
             power=bool(raw.get("power")),
             active=bool(raw.get("active")),
