@@ -271,6 +271,7 @@ async def test_failed_away_command_keeps_local_preset(
         await entity.async_set_preset_mode(PRESET_AWAY)
     assert entity.preset_mode == PRESET_NONE
 
+
 async def test_coordinator_recovers_after_temporary_network_failure(
     hass, entry, client, status
 ) -> None:
