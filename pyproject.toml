@@ -1,5 +1,5 @@
 [project]
-name = "floureon-homeassistant"
+name = "hysen-homeassistant"
 version = "3.0.0"
 description = "Local Home Assistant integration for Hysen HY02/HY03 Broadlink thermostats"
 requires-python = ">=3.14.2"
