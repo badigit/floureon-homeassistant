@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14.2"
 
 [[package]]
@@ -540,14 +540,14 @@ wheels = [
 
 [[package]]
 name = "broadlink-async"
-version = "1.2.1"
+version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cryptography" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/20/6a/6b3a9d6a763b690683d2e08e402e9131f9ac0a318bdd3c4fa12596227cd2/broadlink_async-1.2.1.tar.gz", hash = "sha256:1ff97c434d9ddeee7b3f73b9590d4abe093adc91de8278150d54385178570acb", size = 96914, upload-time = "2026-11-04T21:19:05.798Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ce/b0/1f638e7b200625b5621cde67542031a9d6cce4766b0f476703cc51552a22/broadlink_async-1.3.0.tar.gz", hash = "sha256:1715986e6956b0aa5417e6e858f4d6647e33212f14ca9b2a9869da0e31de9f6e", size = 102977, upload-time = "2026-11-16T16:53:46.742Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d6/71/9487e1646d0f2ee2d8442a9a117e636defa5f80e85fbbe5507db601b25e1/broadlink_async-1.2.1-py3-none-any.whl", hash = "sha256:a449b6000ad655d1997e3d6172c31303853181169560d54a90683ea21fb6aad7", size = 45199, upload-time = "2026-11-04T21:19:03.476Z" },
+    { url = "https://files.pythonhosted.org/packages/5c/54/ead04d56e7ac22583118eb8301e8e863482657f44bca0e57f94bf47fe879/broadlink_async-1.3.0-py3-none-any.whl", hash = "sha256:05e4084f53d6304d8819d8071cd04dbad31eca6f2f313ecde9b75c9031b18e68", size = 46979, upload-time = "2026-11-16T16:53:45.559Z" },
 ]
 
 [[package]]
@@ -1274,7 +1274,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "broadlink-async", specifier = "==1.2.1" },
+    { name = "broadlink-async", specifier = "==1.3.0" },
     { name = "pytest-cov", specifier = ">=6" },
     { name = "pytest-homeassistant", specifier = "==2026.11.2" },
     { name = "pytest-timeout", specifier = ">=2.3" },
