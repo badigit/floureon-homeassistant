@@ -1,6 +1,6 @@
 [project]
 name = "floureon-homeassistant"
-version = "2.1.0"
+version = "3.0.0"
 description = "Local Home Assistant integration for Hysen HY02/HY03 Broadlink thermostats"
 requires-python = ">=3.14.2"
 dependencies = []
@@ -24,7 +24,7 @@ timeout = 60
 timeout_method = "thread"
 
 [tool.coverage.run]
-source = ["custom_components/floureon"]
+source = ["custom_components/hysen"]
 
 [tool.ruff]
 target-version = "py314"

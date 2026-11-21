@@ -11,11 +11,11 @@ from homeassistant.const import CONF_HOST, CONF_NAME, CONF_TIMEOUT
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
-from custom_components.floureon.api import (
+from custom_components.hysen.api import (
     FloureonAuthenticationError,
     UnsupportedDeviceError,
 )
-from custom_components.floureon.const import (
+from custom_components.hysen.const import (
     CONF_ENTITY_TYPE,
     CONF_PRECISION,
     CONF_USE_EXTERNAL_TEMP,

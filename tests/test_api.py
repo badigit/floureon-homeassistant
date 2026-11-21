@@ -5,13 +5,13 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from custom_components.floureon.api import (
+from custom_components.hysen.api import (
     FloureonApiClient,
     FloureonAuthenticationError,
     FloureonStatus,
     UnsupportedDeviceError,
 )
-from custom_components.floureon.const import SUPPORTED_DEVICE_TYPE
+from custom_components.hysen.const import SUPPORTED_DEVICE_TYPE
 
 from .conftest import HOST, MAC, RAW_STATUS
 
@@ -34,7 +34,7 @@ def test_status_tolerates_partial_payload() -> None:
 
 async def test_discover_supported_device(device: MagicMock) -> None:
     with patch(
-        "custom_components.floureon.api.broadlink_async.hello",
+        "custom_components.hysen.api.broadlink_async.hello",
         new_callable=AsyncMock,
         return_value=device,
     ) as discovery:
@@ -49,7 +49,7 @@ async def test_discover_rejects_other_broadlink_device(device: MagicMock) -> Non
     device.devtype = 0x2711
     with (
         patch(
-            "custom_components.floureon.api.broadlink_async.hello",
+            "custom_components.hysen.api.broadlink_async.hello",
             new_callable=AsyncMock,
             return_value=device,
         ),
@@ -60,7 +60,7 @@ async def test_discover_rejects_other_broadlink_device(device: MagicMock) -> Non
 
 def test_from_config_recreates_without_discovery(device: MagicMock) -> None:
     with patch(
-        "custom_components.floureon.api.broadlink_async.gendevice",
+        "custom_components.hysen.api.broadlink_async.gendevice",
         return_value=device,
     ) as factory:
         client = FloureonApiClient.from_config(

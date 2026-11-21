@@ -45,7 +45,7 @@ In HACS, use **Custom repositories** to add the same URL as an **Integration**, 
 
 ### Manual installation
 
-Copy `custom_components/floureon` to the corresponding directory in your Home Assistant configuration folder, then restart Home Assistant Core.
+Copy `custom_components/hysen` to the corresponding directory in your Home Assistant configuration folder, then restart Home Assistant Core.
 
 ## Configuration
 
@@ -63,7 +63,7 @@ The optional switch mode also lets you choose what happens when switching on or 
 
 ## Migrating from the legacy integration
 
-Legacy `climate: - platform: floureon` and `switch: - platform: floureon` YAML entries are imported into config entries on first startup. Once the device appears successfully, you can remove the old YAML configuration.
+Legacy `climate: - platform: hysen` and `switch: - platform: hysen` YAML entries are imported into config entries on first startup. Once the device appears successfully, you can remove the old YAML configuration.
 
 The existing name, sensor settings, schedule, temperature precision, and switch behavior are preserved. An old precision of 0.1 °C is converted to 0.5 °C because the Hysen target-temperature register only supports half-degree increments.
 
@@ -78,7 +78,7 @@ Home Assistant tests run on Linux because Home Assistant Core imports the POSIX-
 
 ## Acknowledgments
 
-The thermostat protocol is implemented by [`broadlink-async`](https://github.com/DAB-LABS/broadlink-async). This project is an independent new integration and does not continue the Git history of the former `hass-floureon` project.
+The thermostat protocol is implemented by [`broadlink-async`](https://github.com/DAB-LABS/broadlink-async). This project is an independent new integration and does not continue the Git history of the former `hass-hysen` project.
 
 ## License
 
@@ -86,4 +86,4 @@ MIT. This project is not affiliated with any of the device manufacturers mention
 
 ## Existing installations and integration ID
 
-The displayed integration name is **Hysen Thermostat (Broadlink)**, but the Home Assistant domain and installation folder remain `floureon`. Existing config entries and entity IDs are preserved; no reinstallation is required. The repository URL is unchanged.
+The displayed integration name is **Hysen Thermostat (Broadlink)**, but the Home Assistant domain and installation folder remain `hysen`. Existing config entries and entity IDs are preserved; no reinstallation is required. The repository URL is unchanged.

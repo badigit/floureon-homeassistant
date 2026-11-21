@@ -24,7 +24,7 @@ jobs:
           cache-dependency-glob: uv.lock
       - run: uv lock --check
       - run: uv sync --group dev --frozen
-      - run: uv run pytest --cov=custom_components/floureon --cov-report=term-missing
+      - run: uv run pytest --cov=custom_components/hysen --cov-report=term-missing
 
   ruff:
     name: Ruff

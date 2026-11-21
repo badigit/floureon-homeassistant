@@ -6,7 +6,7 @@ from typing import Final
 
 from homeassistant.const import Platform
 
-DOMAIN: Final = "floureon"
+DOMAIN: Final = "hysen"
 MANUFACTURER: Final = "Hysen"
 MODEL: Final = "HY02/HY03"
 DEFAULT_NAME: Final = "Hysen Thermostat (Broadlink)"
