@@ -896,31 +896,6 @@ wheels = [
 ]
 
 [[package]]
-name = "floureon-homeassistant"
-version = "3.0.0"
-source = { virtual = "." }
-
-[package.dev-dependencies]
-dev = [
-    { name = "broadlink-async" },
-    { name = "pytest-cov" },
-    { name = "pytest-homeassistant" },
-    { name = "pytest-timeout" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "broadlink-async", specifier = "==1.2.1" },
-    { name = "pytest-cov", specifier = ">=6" },
-    { name = "pytest-homeassistant", specifier = "==2026.11.2" },
-    { name = "pytest-timeout", specifier = ">=2.3" },
-    { name = "ruff", specifier = ">=0.14.0" },
-]
-
-[[package]]
 name = "fnv-hash-fast"
 version = "2.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -1279,6 +1254,31 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/cd/c4/0e5636363151a2a1795e0a77617168b9ca438e1748ec05fc9b5687f93d64/httpx2_jsfetch-1.0.tar.gz", hash = "sha256:70a0e3eabfef7cce5ad9c629f7d01ca05e418f586646f4ddf14782e4c1454c60", size = 6872, upload-time = "2026-08-07T00:13:07.492Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9b/43/832f631d32e4f1211caa2ba368317739fe71f0b8530e4c9d15dc454bac2a/httpx2_jsfetch-1.0-py3-none-any.whl", hash = "sha256:cb916b707601e69a07721aabc8f3f6659be3a6893bc1ff5c6f9e02241df2da32", size = 6382, upload-time = "2026-08-07T00:13:06.567Z" },
+]
+
+[[package]]
+name = "hysen-homeassistant"
+version = "3.0.0"
+source = { virtual = "." }
+
+[package.dev-dependencies]
+dev = [
+    { name = "broadlink-async" },
+    { name = "pytest-cov" },
+    { name = "pytest-homeassistant" },
+    { name = "pytest-timeout" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "broadlink-async", specifier = "==1.2.1" },
+    { name = "pytest-cov", specifier = ">=6" },
+    { name = "pytest-homeassistant", specifier = "==2026.11.2" },
+    { name = "pytest-timeout", specifier = ">=2.3" },
+    { name = "ruff", specifier = ">=0.14.0" },
 ]
 
 [[package]]
