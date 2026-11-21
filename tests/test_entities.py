@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from zoneinfo import ZoneInfo
 
 import pytest
-from broadlink.exceptions import NetworkTimeoutError
+from broadlink_async.exceptions import NetworkTimeoutError
 from homeassistant.components.climate import HVACAction, HVACMode
 from homeassistant.components.climate.const import PRESET_AWAY, PRESET_NONE
 from homeassistant.exceptions import (
@@ -55,8 +55,8 @@ def test_climate_reports_modes_actions_and_limits(hass, entry, client, status) -
     entity = FloureonClimate(coordinator)
     assert entity.hvac_mode is HVACMode.AUTO
     assert entity.hvac_action is HVACAction.HEATING
-    assert entity.current_temperature == 25
-    assert entity.target_temperature == 23
+    assert entity.native_current_temperature == 25
+    assert entity.native_target_temperature == 23
     assert entity.min_temp == 5
     assert entity.max_temp == 35
     assert entity.preset_mode == PRESET_NONE
@@ -78,6 +78,7 @@ async def test_climate_all_commands(hass, entry, client, status) -> None:
     coordinator = _coordinator(hass, entry, client, status)
     coordinator.async_command = AsyncMock()
     entity = FloureonClimate(coordinator)
+    entity.async_write_ha_state = MagicMock()
 
     await entity.async_set_temperature(temperature=21.5)
     entity._preset_mode = PRESET_AWAY
@@ -119,7 +120,7 @@ def test_cooling_and_internal_sensor(hass, entry, client, status) -> None:
     entity = FloureonClimate(coordinator)
     assert HVACMode.HEAT_COOL in entity.hvac_modes
     assert entity.hvac_action is HVACAction.COOLING
-    assert entity.current_temperature == 21.5
+    assert entity.native_current_temperature == 21.5
 
 
 def test_switch_states_and_attributes(hass, entry, client, status) -> None:
@@ -172,13 +173,13 @@ async def test_coordinator_classifies_transport_errors(
 ) -> None:
     """Polling and command failures become HA-native errors."""
     coordinator = _coordinator(hass, entry, client, status)
-    client.read_status = lambda: (_ for _ in ()).throw(
-        NetworkTimeoutError(-4000, "timeout", "offline")
+    client.read_status = AsyncMock(
+        side_effect=NetworkTimeoutError(-4000, "timeout", "offline")
     )
     with pytest.raises(Exception, match="Error communicating"):
         await coordinator._async_update_data()
 
-    client.set_time = lambda: (_ for _ in ()).throw(OSError("offline"))
+    client.set_time = AsyncMock(side_effect=OSError("offline"))
     with pytest.raises(HomeAssistantError):
         await coordinator.async_command(client.set_time)
 
@@ -188,29 +189,17 @@ async def test_coordinator_authentication_and_clock_failures(
 ) -> None:
     """Setup retry, reauth and best-effort clock branches are distinct."""
     coordinator = _coordinator(hass, entry, client, status)
-    client.authenticate = lambda: (_ for _ in ()).throw(OSError("offline"))
+    client.authenticate = AsyncMock(side_effect=OSError("offline"))
     with pytest.raises(ConfigEntryNotReady):
         await coordinator.async_authenticate()
 
-    client.authenticate = lambda: (_ for _ in ()).throw(
-        FloureonAuthenticationError("rejected")
-    )
+    client.authenticate = AsyncMock(side_effect=FloureonAuthenticationError("rejected"))
     with pytest.raises(ConfigEntryNotReady):
         await coordinator.async_authenticate()
 
-    from broadlink.exceptions import AuthenticationError
-
-    auth_error = AuthenticationError(-4000, "auth", "rejected")
-    client.authenticate = MagicMock(return_value=None)
-    client.read_status = MagicMock(side_effect=[auth_error, status])
-    assert await coordinator._async_update_data() == status
-    client.authenticate.assert_called_once()
-
-    command = MagicMock(side_effect=[auth_error, None])
-    coordinator.async_request_refresh = AsyncMock()
-    await coordinator.async_command(command)
-    assert command.call_count == 2
-    assert client.authenticate.call_count == 2
+    client.authenticate = AsyncMock(return_value=None)
+    await coordinator.async_authenticate()
+    client.authenticate.assert_awaited_once()
 
     coordinator.async_command = AsyncMock(side_effect=HomeAssistantError("clock"))
     await coordinator.async_set_time()
@@ -220,12 +209,16 @@ async def test_clock_uses_home_assistant_timezone(hass, entry, client, status) -
     """Clock sync must use HA's configured timezone, not the container timezone."""
     coordinator = _coordinator(hass, entry, client, status)
     now = datetime(2026, 9, 2, 10, 25, 0, tzinfo=ZoneInfo("Europe/Moscow"))
-    coordinator.async_command = AsyncMock(side_effect=lambda command: command())
+
+    async def execute(command):
+        await command()
+
+    coordinator.async_command = AsyncMock(side_effect=execute)
 
     with patch("custom_components.floureon.coordinator.dt_util.now", return_value=now):
         await coordinator.async_set_time()
 
-    client.device.set_time.assert_called_once_with(10, 25, 0, 3)
+    client.device.set_time.assert_awaited_once_with(10, 25, 0, 3)
 
 
 async def test_legacy_platforms_and_platform_selection(
@@ -267,3 +260,32 @@ async def test_diagnostics_redacts_identity(hass, entry, client, status) -> None
     diagnostics = await async_get_config_entry_diagnostics(hass, entry)
     assert diagnostics["status"]["target_temp"] == 23
     assert diagnostics["config_entry"]["data"]["host"] == "**REDACTED**"
+
+
+async def test_failed_away_command_keeps_local_preset(
+    hass, entry, client, status
+) -> None:
+    coordinator = _coordinator(hass, entry, client, status)
+    coordinator.async_command = AsyncMock(side_effect=HomeAssistantError("offline"))
+    entity = FloureonClimate(coordinator)
+    with pytest.raises(HomeAssistantError):
+        await entity.async_set_preset_mode(PRESET_AWAY)
+    assert entity.preset_mode == PRESET_NONE
+
+
+async def test_coordinator_recovers_after_temporary_network_failure(
+    hass, entry, client, status
+) -> None:
+    from homeassistant.helpers.update_coordinator import UpdateFailed
+
+    coordinator = _coordinator(hass, entry, client, status)
+    client.read_status = AsyncMock(
+        side_effect=[
+            NetworkTimeoutError(-4000, "timeout", "offline"),
+            status,
+        ]
+    )
+    with pytest.raises(UpdateFailed):
+        await coordinator._async_update_data()
+    assert await coordinator._async_update_data() == status
+    assert client.read_status.await_count == 2

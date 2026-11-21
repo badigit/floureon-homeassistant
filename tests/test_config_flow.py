@@ -5,7 +5,7 @@ from __future__ import annotations
 from unittest.mock import MagicMock
 
 import pytest
-from broadlink.exceptions import NetworkTimeoutError
+from broadlink_async.exceptions import NetworkTimeoutError
 from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_TIMEOUT
 from homeassistant.core import HomeAssistant
@@ -212,3 +212,39 @@ async def test_options_flow(add_entry, hass: HomeAssistant) -> None:
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["data"]["scan_interval"] == 60
+
+
+async def test_config_flow_closes_discovery_socket(
+    hass: HomeAssistant,
+    mock_discovery: MagicMock,
+    mock_setup_entry: MagicMock,
+) -> None:
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_HOST: HOST, CONF_TIMEOUT: 3, CONF_ENTITY_TYPE: ENTITY_TYPE_CLIMATE},
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    mock_discovery.return_value.device.aclose.assert_awaited_once()
+
+
+async def test_rediscovery_updates_ip_without_reloading_twice(
+    hass: HomeAssistant,
+    add_entry,
+    mock_discovery: MagicMock,
+    mock_setup_entry: MagicMock,
+) -> None:
+    new_host = "192.0.2.21"
+    mock_discovery.return_value.device.host = (new_host, 80)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_HOST: new_host, CONF_TIMEOUT: 3, CONF_ENTITY_TYPE: ENTITY_TYPE_CLIMATE},
+    )
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "already_configured"
+    assert add_entry.data[CONF_HOST] == new_host

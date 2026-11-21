@@ -20,13 +20,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: FloureonConfigEntry) -> 
         timeout=entry.data[CONF_TIMEOUT],
     )
     coordinator = FloureonDataUpdateCoordinator(hass, entry, client)
-    await coordinator.async_authenticate()
-    await coordinator.async_config_entry_first_refresh()
-
-    entry.runtime_data = coordinator
-    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    await coordinator.async_set_time()
+    try:
+        await coordinator.async_authenticate()
+        await coordinator.async_config_entry_first_refresh()
+        entry.runtime_data = coordinator
+        entry.async_on_unload(entry.add_update_listener(async_reload_entry))
+        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+        await coordinator.async_set_time()
+    except BaseException:
+        await client.close()
+        raise
     return True
 
 
@@ -37,4 +40,7 @@ async def async_reload_entry(hass: HomeAssistant, entry: FloureonConfigEntry) ->
 
 async def async_unload_entry(hass: HomeAssistant, entry: FloureonConfigEntry) -> bool:
     """Unload a config entry."""
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if not await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+        return False
+    await entry.runtime_data.client.close()
+    return True

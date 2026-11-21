@@ -9,7 +9,7 @@ from homeassistant.const import Platform
 DOMAIN: Final = "floureon"
 MANUFACTURER: Final = "Hysen"
 MODEL: Final = "HY02/HY03"
-DEFAULT_NAME: Final = "Floureon Thermostat"
+DEFAULT_NAME: Final = "Hysen Thermostat (Broadlink)"
 DEFAULT_SCAN_INTERVAL: Final = 30
 MIN_SCAN_INTERVAL: Final = 10
 MAX_SCAN_INTERVAL: Final = 3600

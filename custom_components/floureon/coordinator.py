@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from datetime import timedelta
-from typing import Any, TypeVar
+from typing import Any
 
-from broadlink.exceptions import AuthenticationError, BroadlinkException
+from broadlink_async.exceptions import BroadlinkException
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant
@@ -25,11 +25,10 @@ from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 type FloureonConfigEntry = ConfigEntry["FloureonDataUpdateCoordinator"]
-_T = TypeVar("_T")
 
 
 class FloureonDataUpdateCoordinator(DataUpdateCoordinator[FloureonStatus]):
-    """Serialise access to one blocking UDP thermostat."""
+    """Serialise access to one UDP thermostat."""
 
     config_entry: FloureonConfigEntry
 
@@ -52,16 +51,11 @@ class FloureonDataUpdateCoordinator(DataUpdateCoordinator[FloureonStatus]):
             always_update=False,
         )
 
-    async def _async_executor(self, call: Callable[[], _T]) -> _T:
-        """Run a blocking Broadlink operation outside the event loop."""
-        return await self.hass.async_add_executor_job(call)
-
     async def async_authenticate(self) -> None:
         """Authenticate during setup and classify failures."""
         try:
-            await self._async_executor(self.client.authenticate)
+            await self.client.authenticate()
         except (
-            AuthenticationError,
             FloureonAuthenticationError,
             BroadlinkException,
             OSError,
@@ -72,9 +66,7 @@ class FloureonDataUpdateCoordinator(DataUpdateCoordinator[FloureonStatus]):
         """Fetch the latest snapshot."""
         try:
             async with self._command_lock:
-                return await self._async_executor(
-                    lambda: self._call_with_reauthentication(self.client.read_status)
-                )
+                return await self.client.read_status()
         except (
             FloureonAuthenticationError,
             BroadlinkException,
@@ -84,13 +76,11 @@ class FloureonDataUpdateCoordinator(DataUpdateCoordinator[FloureonStatus]):
         ) as err:
             raise UpdateFailed(f"Error communicating with thermostat: {err}") from err
 
-    async def async_command(self, call: Callable[[], Any]) -> None:
+    async def async_command(self, call: Callable[[], Awaitable[Any]]) -> None:
         """Execute a command, then refresh the shared snapshot."""
         try:
             async with self._command_lock:
-                await self._async_executor(
-                    lambda: self._call_with_reauthentication(call)
-                )
+                await call()
         except (
             FloureonAuthenticationError,
             BroadlinkException,
@@ -104,14 +94,6 @@ class FloureonDataUpdateCoordinator(DataUpdateCoordinator[FloureonStatus]):
                 translation_placeholders={"error": str(err)},
             ) from err
         await self.async_request_refresh()
-
-    def _call_with_reauthentication(self, call: Callable[[], _T]) -> _T:
-        """Retry one operation after renewing Broadlink's session key."""
-        try:
-            return call()
-        except AuthenticationError:
-            self.client.authenticate()
-            return call()
 
     async def async_set_time(self) -> None:
         """Best-effort clock synchronisation after setup."""

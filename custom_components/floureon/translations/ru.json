@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "description": "Подключение локального термостата Floureon, Hysen, Beok, Beca или Decdeal.",
+        "description": "Подключение локального термостата Hysen, Floureon, Beok, Beca или Decdeal.",
         "data": {"host": "Адрес", "timeout": "Таймаут подключения", "entity_type": "Тип сущности"},
         "data_description": {
           "host": "Статический IP-адрес или имя термостата.",
