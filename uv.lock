@@ -1,5 +1,5 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = ">=3.14.2"
 
 [[package]]
@@ -897,7 +897,7 @@ wheels = [
 
 [[package]]
 name = "floureon-homeassistant"
-version = "2.1.0"
+version = "3.0.0"
 source = { virtual = "." }
 
 [package.dev-dependencies]

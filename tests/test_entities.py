@@ -16,15 +16,15 @@ from homeassistant.exceptions import (
     HomeAssistantError,
 )
 
-from custom_components.floureon.api import FloureonAuthenticationError
-from custom_components.floureon.climate import FloureonClimate
-from custom_components.floureon.climate import (
+from custom_components.hysen.api import FloureonAuthenticationError
+from custom_components.hysen.climate import FloureonClimate
+from custom_components.hysen.climate import (
     async_setup_entry as async_setup_climate_entry,
 )
-from custom_components.floureon.climate import (
+from custom_components.hysen.climate import (
     async_setup_platform as async_setup_climate_platform,
 )
-from custom_components.floureon.const import (
+from custom_components.hysen.const import (
     CONF_ENTITY_TYPE,
     CONF_TURN_OFF_MODE,
     CONF_TURN_ON_MODE,
@@ -32,13 +32,13 @@ from custom_components.floureon.const import (
     MIN_TEMP,
     TURN_OFF,
 )
-from custom_components.floureon.coordinator import FloureonDataUpdateCoordinator
-from custom_components.floureon.diagnostics import async_get_config_entry_diagnostics
-from custom_components.floureon.switch import FloureonSwitch
-from custom_components.floureon.switch import (
+from custom_components.hysen.coordinator import FloureonDataUpdateCoordinator
+from custom_components.hysen.diagnostics import async_get_config_entry_diagnostics
+from custom_components.hysen.switch import FloureonSwitch
+from custom_components.hysen.switch import (
     async_setup_entry as async_setup_switch_entry,
 )
-from custom_components.floureon.switch import (
+from custom_components.hysen.switch import (
     async_setup_platform as async_setup_switch_platform,
 )
 
@@ -215,7 +215,7 @@ async def test_clock_uses_home_assistant_timezone(hass, entry, client, status) -
 
     coordinator.async_command = AsyncMock(side_effect=execute)
 
-    with patch("custom_components.floureon.coordinator.dt_util.now", return_value=now):
+    with patch("custom_components.hysen.coordinator.dt_util.now", return_value=now):
         await coordinator.async_set_time()
 
     client.device.set_time.assert_awaited_once_with(10, 25, 0, 3)

@@ -31,7 +31,7 @@ async def test_setup_commands_reload_and_unload(
     """A config entry creates a working climate entity and unloads cleanly."""
     entry.add_to_hass(hass)
     with patch(
-        "custom_components.floureon.FloureonApiClient.from_config",
+        "custom_components.hysen.FloureonApiClient.from_config",
         return_value=client,
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
@@ -72,7 +72,7 @@ async def test_reload_listener(hass: HomeAssistant, entry, client) -> None:
     """Changing options reloads the entry through the registered listener."""
     entry.add_to_hass(hass)
     with patch(
-        "custom_components.floureon.FloureonApiClient.from_config",
+        "custom_components.hysen.FloureonApiClient.from_config",
         return_value=client,
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
@@ -92,7 +92,7 @@ async def test_climate_converts_native_celsius_to_fahrenheit(
     hass.config.units = US_CUSTOMARY_SYSTEM
     entry.add_to_hass(hass)
     with patch(
-        "custom_components.floureon.FloureonApiClient.from_config",
+        "custom_components.hysen.FloureonApiClient.from_config",
         return_value=client,
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
@@ -114,7 +114,7 @@ async def test_preset_mode_is_published_after_command(
     """The post-command refresh must not freeze a stale preset in the state."""
     entry.add_to_hass(hass)
     with patch(
-        "custom_components.floureon.FloureonApiClient.from_config",
+        "custom_components.hysen.FloureonApiClient.from_config",
         return_value=client,
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)

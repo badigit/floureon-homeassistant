@@ -9,8 +9,8 @@ from homeassistant.const import CONF_HOST, CONF_MAC, CONF_TIMEOUT, CONF_TYPE
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant.common import MockConfigEntry
 
-from custom_components.floureon.api import FloureonApiClient, FloureonStatus
-from custom_components.floureon.const import (
+from custom_components.hysen.api import FloureonApiClient, FloureonStatus
+from custom_components.hysen.const import (
     CONF_ENTITY_TYPE,
     DOMAIN,
     ENTITY_TYPE_CLIMATE,
@@ -98,7 +98,7 @@ def entry() -> MockConfigEntry:
 def mock_discovery(client: FloureonApiClient):
     """Patch config-flow discovery."""
     with patch(
-        "custom_components.floureon.config_flow.FloureonApiClient.discover",
+        "custom_components.hysen.config_flow.FloureonApiClient.discover",
         new_callable=AsyncMock,
         return_value=client,
     ) as mocked:
@@ -109,7 +109,7 @@ def mock_discovery(client: FloureonApiClient):
 def mock_setup_entry():
     """Prevent a successful flow from talking to platform setup."""
     with patch(
-        "custom_components.floureon.async_setup_entry",
+        "custom_components.hysen.async_setup_entry",
         new=AsyncMock(return_value=True),
     ) as mocked:
         yield mocked
