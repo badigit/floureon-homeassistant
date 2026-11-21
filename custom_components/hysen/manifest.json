@@ -8,10 +8,10 @@
     "@badigit"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/badigit/floureon-homeassistant",
+  "documentation": "https://github.com/badigit/hysen-homeassistant",
   "integration_type": "device",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/badigit/floureon-homeassistant/issues",
+  "issue_tracker": "https://github.com/badigit/hysen-homeassistant/issues",
   "loggers": [
     "broadlink_async"
   ],

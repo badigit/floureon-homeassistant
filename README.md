@@ -8,7 +8,7 @@ A local Home Assistant integration for **Hysen HY02/HY03 Wi-Fi thermostats** usi
 
 **The protocol matters, not the brand or appearance.** This integration accepts thermostats reporting **Broadlink device type `0x4EAD`**. A similar-looking device or one sold under a listed brand is not necessarily compatible; other Wi-Fi, Zigbee, or Tuya variants may use different protocols.
 
-Some **Computherm** models (such as E400RF) have been described by other projects as Hysen-based, but **they have not been verified with this integration**. If you test another model, please [open an issue](https://github.com/badigit/floureon-homeassistant/issues) with its exact model and Broadlink device type.
+Some **Computherm** models (such as E400RF) have been described by other projects as Hysen-based, but **they have not been verified with this integration**. If you test another model, please [open an issue](https://github.com/badigit/hysen-homeassistant/issues) with its exact model and Broadlink device type.
 
 ## Features
 
@@ -33,7 +33,7 @@ UDP operations use native async I/O. Commands and polling are serialized per dev
 
 ### Marketplace (Home Assistant 2026.11+)
 
-1. Open **Settings → Marketplace** and add `https://github.com/badigit/floureon-homeassistant` as a custom integration repository.
+1. Open **Settings → Marketplace** and add `https://github.com/badigit/hysen-homeassistant` as a custom integration repository.
 2. Install **Hysen Thermostat (Broadlink)** and restart Home Assistant.
 3. Go to **Settings → Devices & services → Add integration** and select **Hysen Thermostat (Broadlink)**.
 
